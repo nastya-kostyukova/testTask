@@ -37,11 +37,24 @@ module.exports = {
       doc.fontSize(25).text('firstName: '+ user.firstName, 100, 100);
       doc.fontSize(25).text('lastName: '+ user.lastName, 100, 200);
       doc.image(user.image, 100, 400, {
-        width: 300
+        width: 100
       }).text('Image', 100, 400);
 
       doc.end();
-      
+
+
+        var bitmap = fs.readFileSync('output.pdf');
+        // convert binary data to base64 encoded string
+        var pdfBinary = new Buffer(bitmap).toString('base64');
+
+
+      User.update({id: user.id}, {pdf: pdfBinary}).exec(function(err, res) {
+        if (err) {
+          console.log('error ' + err);
+          return res.negotiate(err);
+        }
+        console.log('updated pdf');
+      });
       return res.json({
           user : result,
           error: err
