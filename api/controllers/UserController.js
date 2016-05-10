@@ -10,7 +10,7 @@
 PDFDocument = require('pdfkit');
 blobStream  = require('blob-stream');
 const fs = require('fs');
-
+const util = require('util');
 
 module.exports = {
 	findUser : function(req, res) {
@@ -36,29 +36,51 @@ module.exports = {
 
       doc.fontSize(25).text('firstName: '+ user.firstName, 100, 100);
       doc.fontSize(25).text('lastName: '+ user.lastName, 100, 200);
-      doc.image(user.image, 100, 400, {
+      doc.image(user.image, 100, 350, {
         width: 100
       }).text('Image', 100, 400);
 
       doc.end();
 
-
+      try {
         var bitmap = fs.readFileSync('output.pdf');
-        // convert binary data to base64 encoded string
-        var pdfBinary = new Buffer(bitmap).toString('base64');
+        
+        //TO DO: add promise and run this after file is updated
+        fs.open('output.pdf', 'r', function(status, fd) {
+          if (status) {
+            console.log(status.message);
+            return;
+          }
+          var buffer = new Buffer(8192);
+          fs.read(fd, buffer, 0, 8192, 0, function(err, num) {
+            console.log(num);
+            console.log(buffer.toString('utf8', 0, num));
 
-
-      User.update({id: user.id}, {pdf: pdfBinary}).exec(function(err, res) {
-        if (err) {
-          console.log('error ' + err);
-          return res.negotiate(err);
-        }
-        console.log('updated pdf');
-      });
-      return res.json({
-          user : result,
-          error: err
+            User.update({id: user.id}, {pdf: buffer.toString('utf8', 0, num)}).exec(function(err, res) {
+              if (err) {
+                console.log('error ' + err);
+                return res.negotiate(err);
+              }
+              console.log('updated pdf');
+            });
+            return res.json({
+              user : result,
+              error: err
+            });
+          });
         });
+
+        /*console.log(util.inspect(bitmap, false, null));
+        console.log('-----------');
+        console.log(util.inspect(pdfBinary, false, null));*/
+
+      } catch (e) {
+        console.log(e);
+        // Here you get the error when the file was not found,
+        // but you also get any other error
+      }
+
+
     });
 
 
