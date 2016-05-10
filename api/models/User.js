@@ -7,6 +7,13 @@
 
 module.exports = {
 
+  connection: 'someMysqlServer',
+  tableName: 'user',
+
+  schema: true,
+  autoCreatedAt: false,
+  autoUpdatedAt: false,
+  
   attributes: {
     firstName: {
       type: 'string',
@@ -16,9 +23,11 @@ module.exports = {
     },
     image: {
       type: 'binary',
+      required: false,
     },
     pdf: {
       type: 'binary',
+      required: false,
     }
   }
 };
