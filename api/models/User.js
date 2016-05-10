@@ -13,7 +13,7 @@ module.exports = {
   schema: true,
   autoCreatedAt: false,
   autoUpdatedAt: false,
-  
+
   attributes: {
     firstName: {
       type: 'string',
