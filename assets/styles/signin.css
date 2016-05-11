@@ -39,7 +39,7 @@ body {
 }
 .error{
   background: #ffb6b6;
-  padding: 7px 52px;
+  padding: 8px 52px;
   margin-top: 20px;
   color: red;
   font-weight: normal;
@@ -49,7 +49,7 @@ body {
 }
 .success{
   background: lightgreen;
-  padding: 7px 52px;
+  padding: 8px 52px;
   margin-top: 20px;
   color: green;
   font-weight: normal;
