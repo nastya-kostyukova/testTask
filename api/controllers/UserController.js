@@ -10,83 +10,79 @@
 PDFDocument = require('pdfkit');
 blobStream  = require('blob-stream');
 const fs = require('fs');
-const util = require('util');
 
 module.exports = {
-	findUser : function(req, res) {
-    console.log("I'm here");
-
-    var userName = req.param('firstName');
-    console.log(userName);
+	findUser : function(request, response) {
+    var isGenerated = false;
+    var userName = request.param('firstName');
 
     User.find({firstName : userName}).exec(function(err, result) {
       if (err) {
-        console.log('error');
-        return res.negotiate(err);
+        console.log('Error : '+ err);
+        return response.negotiate(err);
       }
-      var user = result[0];
 
-      var PDFDocument, doc;
+      //generate document for each found the user
+      result.forEach(function(user, index) {
+        isGenerated = false;
+        var PDFDocument, doc;
+        PDFDocument = require('pdfkit');
+        doc = new PDFDocument;
 
-      PDFDocument = require('pdfkit');
+        var stream = doc.pipe(fs.createWriteStream('output.pdf', {
+          flags: 'w',
+          defaultEncoding: 'binary',
+          fd: null,
+          autoClose: true
+        }));
 
-      doc = new PDFDocument;
+        var writeStream = fs.createWriteStream('test.html');
 
-      doc.pipe(fs.createWriteStream('output.pdf'));
+        doc.fontSize(25).text('firstName: ' + user.firstName, 100, 100);
+        doc.fontSize(25).text('lastName: ' + user.lastName, 100, 200);
+        doc.image(user.image, 100, 250, {
+          width: 100
+        }).text('Image', 100, 400);
 
-      doc.fontSize(25).text('firstName: '+ user.firstName, 100, 100);
-      doc.fontSize(25).text('lastName: '+ user.lastName, 100, 200);
-      doc.image(user.image, 100, 350, {
-        width: 100
-      }).text('Image', 100, 400);
+        doc.end();
 
-      doc.end();
+        stream.on('finish', function() {
+          try {
+            var stats = fs.statSync("output.pdf");
+            var fileSizeInBytes = stats["size"];
 
-      try {
-        var bitmap = fs.readFileSync('output.pdf');
-        
-        //TO DO: add promise and run this after file is updated
-        fs.open('output.pdf', 'r', function(status, fd) {
-          if (status) {
-            console.log(status.message);
-            return;
-          }
-          var buffer = new Buffer(8192);
-          fs.read(fd, buffer, 0, 8192, 0, function(err, num) {
-            console.log(num);
-            console.log(buffer.toString('utf8', 0, num));
-
-            User.update({id: user.id}, {pdf: buffer.toString('utf8', 0, num)}).exec(function(err, res) {
-              if (err) {
-                console.log('error ' + err);
-                return res.negotiate(err);
+            fs.open('output.pdf', 'r', function (status, fd) {
+              if (status) {
+                console.log('Error : '+ status.message);
+                return;
               }
-              console.log('updated pdf');
+              var buffer = new Buffer(fileSizeInBytes);
+              fs.read(fd, buffer, 0, fileSizeInBytes, 0, function (err, num) {
+                isGenerated = true;
+                User.update({id: user.id}, {pdf: buffer}).exec(function (err, res) {
+                  if (err) {
+                    console.log('Error : '+  + err);
+                    return res.negotiate(err);
+                  }
+                });
+
+              });
             });
-            return res.json({
-              user : result,
-              error: err
-            });
-          });
+
+
+          } catch (e) {
+            console.log(e);
+          }
         });
-
-        /*console.log(util.inspect(bitmap, false, null));
-        console.log('-----------');
-        console.log(util.inspect(pdfBinary, false, null));*/
-
-      } catch (e) {
-        console.log(e);
-        // Here you get the error when the file was not found,
-        // but you also get any other error
-      }
-
+      })
 
     });
 
+      return response.json({
+        result: isGenerated,
+      });
 
 
-  },
-  addUser : function(req, res) {
 
   }
 };
