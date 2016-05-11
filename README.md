@@ -20,5 +20,5 @@ a [Sails](http://sailsjs.org) application
 * sails lift
 * enter first name
 * see result of generating
-* * File stores in db and on the disk as output.pdf
+* * File stores at db and on the disk as output.pdf
 
