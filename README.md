@@ -12,7 +12,7 @@ a [Sails](http://sailsjs.org) application
 
 * nmp install
 * run create_db.sql to create schema
-* (optional) open testDb_user0.sql (this is dump with values for testing)
+* * open testDb_user0.sql (this is dump with values for testing)
 
 ## Usage:
 
