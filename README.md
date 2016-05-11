@@ -10,6 +10,7 @@ a [Sails](http://sailsjs.org) application
 
 ## Installation:
 
+* sudo npm -g install sails
 * nmp install
 * run create_db.sql to create schema
 * * open testDb_user0.sql (this is dump with values for testing)
