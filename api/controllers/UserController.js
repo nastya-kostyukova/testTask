@@ -14,7 +14,7 @@ module.exports = {
     var userName = request.param('firstName');
 
     var result = GeneratePDFService.generatePDFByFirstName(userName).then(function(results) {
-      console.log(results);
+
       return response.json({
         result: results
       });

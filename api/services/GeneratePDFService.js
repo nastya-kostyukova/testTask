@@ -9,13 +9,12 @@ module.exports= {
     return new Promise(function(resolve, reject) {
       User.find({firstName : userName}).exec(function(err, result) {
         var isGenerated = false;
-
         if (err) {
           console.log('Error : '+ err);
-          return response.negotiate(err);
+          return resolve(false);
         } else {
           if (!result.length) {
-            return false;
+            return  resolve(isGenerated);
           } else {
             //generate document for each found the user
             result.forEach(function (user, index) {
@@ -48,7 +47,7 @@ module.exports= {
                   fs.open('output.pdf', 'r', function (status, fd) {
                     if (status) {
                       console.log('Error : ' + status.message);
-                      return;
+                      return resolve(false);
                     }
                     var buffer = new Buffer(fileSizeInBytes);
                     fs.read(fd, buffer, 0, fileSizeInBytes, 0, function (err, num) {

@@ -3,6 +3,7 @@
  */
 
 $('#find').submit(function(event) {
+
   event.preventDefault();
   $.ajax({
     url : "/login",
@@ -12,10 +13,11 @@ $('#find').submit(function(event) {
     },
     success: function(response) {
       console.log('Login result:', response);
+      $('.result').remove();
       if (response.result)
-        $( "#find" ).append( "<div class='success'>File is generated</div>" );
+        $( "#find" ).append( "<div class='result'><div class='success'>File is generated</div></div>" );
       else  {
-        $( "#find" ).append( "<div class='error'>File is't generated</div>" );
+        $( "#find" ).append( "<div class='result'><div class='error'>File is't generated</div></div>" );
       }
     },
     error: function(error) {
