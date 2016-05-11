@@ -10,14 +10,15 @@ a [Sails](http://sailsjs.org) application
 
 ## Installation:
 
+* sudo npm -g install sails
 * nmp install
 * run create_db.sql to create schema
-* (optional) open testDb_user0.sql (this is dump with values for testing)
+* * open testDb_user0.sql (this is dump with values for testing)
 
 ## Usage:
 
 * sails lift
 * enter first name
 * see result of generating
-* * File stores in db and on the disk as output.pdf
+* * File stores at db and on the disk as output.pdf
 
