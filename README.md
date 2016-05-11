@@ -17,8 +17,8 @@ a [Sails](http://sailsjs.org) application
 
 ## Usage:
 
-* sails lift
+* nodemon app.js
 * enter first name
 * see result of generating
-* * File stores at db and on the disk as output.pdf
+* * File stores in db and on the disk as output.pdf
 
